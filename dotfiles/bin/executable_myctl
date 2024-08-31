@@ -1,0 +1,61 @@
+#! /bin/bash
+#shellcheck disable=SC2164
+SELFDIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+confdir="${SELFDIR}/../config/myctl.conf.d"
+
+function printline() {
+    printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+}
+
+service=$1 ; shift
+if [ -z "$service" ] ; then
+    echo "Missing required argument: service"
+    exit 1
+fi
+
+action=$1 ; shift
+if [ -z "$action" ] ; then
+    echo "Missing required argument: action"
+    exit 1
+fi
+
+case $1 in
+    --verbose|-v)
+        verbose="true"
+        shift
+    ;;
+esac
+
+hostname=$(hostname)
+operation_path="${confdir}/${hostname}/${service}/${action}"
+common_path="${confdir}/${hostname}/${service}/common.sh"
+
+if [[ "$verbose" == "true" ]] ; then
+    echo "  Confdir: ${confdir}"
+    echo " Hostname: ${hostname}"
+    echo "  Service: ${service}"
+    echo "   Action: ${action}"
+    printline
+fi
+
+if [ -e "${common_path}" ] ; then
+    if [[ "$verbose" == "true" ]] ; then
+        echo "common_path: ${common_path}"
+        grep -v '^#'  "$common_path" | sed -e 's/^/   /'
+        printline
+    fi
+    #shellcheck disable=SC1090
+    . "${common_path}"
+fi
+
+if [[ "$verbose" == "true" ]] ; then
+    echo "operation_path: ${operation_path}"
+    grep -v '^#'  "$operation_path" | sed -e 's/^/   /'
+    printline
+fi
+
+#shellcheck disable=SC1090
+. "$operation_path"
+status=$?
+printline
+echo "STATUS: $status"

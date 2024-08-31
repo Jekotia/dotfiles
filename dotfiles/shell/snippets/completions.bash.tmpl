@@ -1,0 +1,22 @@
+#! /bin/bash
+#>> Completions for zsh
+if [ -d "${HOME}/{{- $.paths.dotfiles -}}/shell/completions" ] ; then
+	# shellcheck disable=SC2206 # This is specifically for the warning corresponding with $fpath, as quoting it breaks things
+	fpath=("${HOME}/{{- $.paths.dotfiles -}}"/shell/completions $fpath)
+fi
+
+# Check if chezmoi is installed, and source the completion data
+if which chezmoi > /dev/null ; then
+	#shellcheck disable=SC1090
+	source <(chezmoi completion zsh)
+fi
+
+autoload -Uz compinit promptinit
+compinit -d "${HOME}"/.zcompdump
+promptinit
+
+#autoload bashcompinit
+
+#if [ -e ${HOME}/.zshrc.d/completions/bash/* ] ; then
+#	source ${HOME}/.zshrc.d/completions/bash/*
+#fi

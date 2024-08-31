@@ -1,0 +1,12 @@
+#! /usr/bin/zsh
+# To customize prompt, run `p10k configure` or edit ${HOME}/.p10k.zsh.
+# shellcheck disable=SC1091
+[[ ! -f ${HOME}/.p10k.zsh ]] || source "${HOME}/.p10k.zsh"
+### https://github.com/romkatv/powerlevel10k
+if [[ -e ${HOME}/{{- $.paths.dotfiles -}}/external/oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme ]] ; then
+	# shellcheck disable=SC1091
+	source "${HOME}"/{{- $.paths.dotfiles -}}/external/oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
+fi
+
+#shellcheck disable=SC2034
+POWERLEVEL9K_IP_INTERFACE={{- $.system.network_interface | quote }}

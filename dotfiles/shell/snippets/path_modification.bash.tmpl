@@ -1,0 +1,20 @@
+#! /bin/bash
+declare -a binPaths=(
+	"${HOME}/{{- $.paths.dotfiles -}}/bin"
+	"/usr/local/sbin"
+	"/snap/bin"
+	"${HOME}/.bin"
+	"${HOME}/.cabal/bin"
+	"${HOME}/.cargo/bin"
+	"${HOME}/.fzf/bin"
+	"${HOME}/.local/bin"
+	"${HOME}/bin"
+	"${HOME}/Dockerfiles/bin"
+	"${HOME}/go/bin"
+)
+
+for binPath in "${binPaths[@]}" ; do
+	if [ -d "${binPath}" ] && ! { [[ $PATH =~ ^$binPath: ]] || [[ $PATH =~ :$binPath: ]] || [[ $PATH =~ :$binPath$ ]] ; } ; then
+		PATH="${binPath}:${PATH}"
+	fi
+done

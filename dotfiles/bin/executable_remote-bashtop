@@ -1,0 +1,58 @@
+#! /bin/bash
+TMUX_SESSION_NAME="remotemonitor"
+
+function sshCmd() {
+	local host="$1"
+	#shellcheck disable=SC2089
+	local cmd="ssh -tt $host -o 'RemoteCommand none' -C './.zsh/scripts/tmux-bashtop.sh'"
+	echo "$cmd"
+	return
+}
+
+if tmux ls 2> /dev/null ; then
+	tmux kill-session -t "${TMUX_SESSION_NAME}" 2> /dev/null
+fi
+
+CMD_HYPERION="$(sshCmd 'hyperion')"
+CMD_MERCURY="$(sshCmd 'mercury')"
+
+#shellcheck disable=SC2162
+read -p "Set terminal to desired size and then press enter to continue. This is used to determine which direction to split in."
+
+#shellcheck disable=SC2003
+#shellcheck disable=SC2046
+VSPLIT_PANE_WIDTH=$(expr $(tput cols) / 2 )
+VSPLIT_PANE_HEIGHT=$(tput lines)
+
+HSPLIT_PANE_WIDTH=$(tput cols)
+#shellcheck disable=SC2003
+#shellcheck disable=SC2046
+HSPLIT_PANE_HEIGHT=$(expr $(tput lines) / 2)
+
+echo "VSPLIT_PANE_WIDTH: $VSPLIT_PANE_WIDTH"
+echo "VSPLIT_PANE_HEIGHT: $VSPLIT_PANE_HEIGHT"
+echo
+echo "HSPLIT_PANE_WIDTH: $HSPLIT_PANE_WIDTH"
+echo "HSPLIT_PANE_HEIGHT: $HSPLIT_PANE_HEIGHT"
+
+if     [[ $VSPLIT_PANE_WIDTH -ge 80 ]] \
+	&& [[ $VSPLIT_PANE_HEIGHT -ge 24 ]] ; then
+	echo "horizontal"
+	SPLIT='-h'
+elif   [[ $HSPLIT_PANE_WIDTH -ge 80 ]] \
+	&& [[ $HSPLIT_PANE_HEIGHT -ge 24 ]] ; then
+	echo "vertical"
+	SPLIT=''
+else
+	echo "incompatible size"
+	sleep 3
+	exit 1
+fi
+
+#shellcheck disable=SC2086
+tmux new -d -s "${TMUX_SESSION_NAME}" "${CMD_HYPERION}" \; \
+	split-window $SPLIT -d "${CMD_MERCURY}" #\; down-pane \; \
+#			new-window -d 'echo window-2;sleep 4' \; next-window \; \
+#				attach \;
+
+tmux attach-session -t "${TMUX_SESSION_NAME}"

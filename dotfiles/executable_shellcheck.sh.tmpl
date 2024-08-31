@@ -1,0 +1,13 @@
+#! /bin/bash
+cd "${HOME}" || exit 1
+#shellcheck disable=SC1083
+shellcheck \
+	--shell=bash \
+	--severity=info \
+	"${HOME}"/.zshrc \
+	"${HOME}"/{{- $.paths.dotfiles -}}/bin/* \
+	"${HOME}"/{{- $.paths.dotfiles -}}/shell/aliases.bash \
+	"${HOME}"/{{- $.paths.dotfiles -}}/shell/functions/* \
+	"${HOME}"/{{- $.paths.dotfiles -}}/shell/snippets/* \
+	"${HOME}"/{{- $.paths.dotfiles -}}/shell/widgets/*
+	#"${HOME}"/{{- $.paths.dotfiles -}}/shell/completions/* \
