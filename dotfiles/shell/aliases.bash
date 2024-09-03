@@ -18,12 +18,12 @@
 
 # Conditional Aliases
 	# Replace cat with the superior bat
-	if $(which batcat > /dev/null) ; then
+	if which batcat > /dev/null ; then
 		alias cat='batcat'
 	fi
 
 	# Enable `fuck` as an alias for `thefuck`
-	if fuck > /dev/null 2>&1 ; then
+	if which thefuck > /dev/null ; then
 		eval "$(thefuck --alias)"
 	fi
 
