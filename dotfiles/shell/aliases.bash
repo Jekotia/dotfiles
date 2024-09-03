@@ -1,10 +1,12 @@
 #! /bin/bash
-#-> Simple aliases
+# Simple aliases
 	alias adb-packages='adb shell "pm list packages"' # Easier access to listing packages installed on a device connected via ADB
+	alias apt-search="dpkg-query -L"
+#	alias composer="sudo -uapache composer"
 	alias diff="git diff --no-index --color-words" # Use gits' diff feature on any files
-	#alias git="hub"
+#	alias git="hub"
 	alias grep='grep --color=auto'
-	#irccert='sudo su -l weechat -c "irccert $1"'
+#	irccert='sudo su -l weechat -c "irccert $1"'
 	alias ls='ls -F --group-directories-first --color=tty'
 	alias ncdu='ncdu -x -e -r --exclude-kernfs --confirm-quit -2 --color off'
 	alias rm='rm -i' # Make rm interactive by default
@@ -14,20 +16,28 @@
 	alias wanip6='curl -6 icanhazip.com'
 #----
 
-# Complex aliases
-	# occ command for managing owncloud
-#	if is_linux ; then
-#		if [[ -e /var/www/html/owncloud/occ ]] ; then
-#			alias occ="sudo -uapache /var/www/html/owncloud/occ"
-#		fi
-#		alias apt-search="dpkg-query -L"
-#		alias composer="sudo -uapache composer"
-#	fi
-#--->
+# Conditional Aliases
+	# Replace cat with the superior bat
+	if $(which batcat > /dev/null) ; then
+		alias cat='batcat'
+	fi
+
+	# Enable `fuck` as an alias for `thefuck`
+	if fuck > /dev/null 2>&1 ; then
+		eval "$(thefuck --alias)"
+	fi
 
 	# If microk8s is installed, alias its kubectl to mkctl
 #	if hash microk8s > /dev/null 2>&1 ; then
 #		alias mkctl="microk8s kubectl"
+#	fi
+
+#----
+
+# Complex aliases
+	# occ command for managing owncloud
+#	if [[ -e /var/www/html/owncloud/occ ]] ; then
+#		alias occ="sudo -uapache /var/www/html/owncloud/occ"
 #	fi
 #--->
 
@@ -46,8 +56,3 @@
 	# shellcheck disable=SC2139
 	alias nano="nano ${nanoargs}"
 #--->
-
-	#>> Enable `fuck` as an alias for `thefuck`
-	if fuck > /dev/null 2>&1 ; then
-		eval "$(thefuck --alias)"
-	fi
